@@ -59,6 +59,16 @@ public class GameStateManager extends Thread {
         if (currentTime - lastPolled < INTERVAL && lastPolled != -1) {
             return; // Skip if the delay has not passed
         }
+
+        // Update transform from config
+        Transform transform = new Transform(
+            config.getTransformOffsetX(),
+            config.getTransformOffsetY(),
+            config.getTransformScaleX(),
+            config.getTransformScaleY()
+        );
+        this.gameState.setTransform(transform);
+
         this.gameState.poll();
         this.lastPolled.set(currentTime);
         this.submit(gson.toJson(this.gameState));

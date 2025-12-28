@@ -1,6 +1,7 @@
 import { HitBox, PowerTipStrip, Tip } from "../Tip/Tip";
 import { LocalizationContext, Relics } from "../Localization/Localization";
 import { useContext } from "react";
+import { Transform, transformX, transformY } from "../../utils/transform";
 
 const RELIC_HITBOX_WIDTH = 3.75; //%
 const RELIC_HITBOX_LEFT = 1.458; //%
@@ -78,22 +79,21 @@ export function RelicBar(props: {
   relics: string[];
   relicParams: Record<number, (string | number)[]>;
   relicTips: Tip[];
+  transform: Transform;
 }) {
   const multiPage = props.relics.length > RELIC_PER_PAGE ? 1 : 0;
   const relicsLoc = useContext(LocalizationContext).relics;
   return (
     <div id={"relic-bar"}>
       {props.relics.slice(0, RELIC_PER_PAGE).map((relic, i) => {
+        const x = RELIC_HITBOX_LEFT + i * RELIC_HITBOX_WIDTH + multiPage * RELIC_HITBOX_MULTIPAGE_OFFSET;
+        const y = 6.111;
         const hitbox = {
-          x:
-            RELIC_HITBOX_LEFT +
-            i * RELIC_HITBOX_WIDTH +
-            multiPage * RELIC_HITBOX_MULTIPAGE_OFFSET +
-            "%",
-          y: 6.111 + "%",
+          x: `${transformX(x, props.transform)}%`,
+          y: `${transformY(y, props.transform)}%`,
           z: 1,
-          w: 3.75 + "%",
-          h: 8.666 + "%",
+          w: `${(3.75 * props.transform.scaleX) / 100}%`,
+          h: `${(8.666 * props.transform.scaleY) / 100}%`,
         };
         const relicParams = props.relicParams[i] || [];
         const lookupRelicTip = (i: number) => {

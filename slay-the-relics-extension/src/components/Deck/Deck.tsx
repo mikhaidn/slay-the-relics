@@ -12,6 +12,7 @@ import { ReturnButton } from "../Buttons/Buttons";
 import { Cards, LocalizationContext } from "../Localization/Localization";
 import ReactDOMServer from "react-dom/server";
 import { PlacesType } from "react-tooltip";
+import { Transform, transformX, transformY } from "../../utils/transform";
 
 type DeckType = "deck" | "draw" | "discard" | "exhaust";
 type Bottle = "flame" | "lightning" | "tornado" | null;
@@ -402,28 +403,44 @@ export function DeckButton(props: {
   setCardViewMode: Dispatch<SetStateAction<string>>;
   resetCardView: () => void;
   what: DeckType;
+  transform: Transform;
 }) {
   const locationStyle: CSSProperties = {
     display: props.cardCount ? "block" : "none",
   };
+
+  let x = 0, y = 0;
+  let useRight = false, useLeft = false;
+
   switch (props.what) {
     case "deck":
-      locationStyle.top = "0%";
-      locationStyle.right = "4.322%";
+      y = 0;
+      x = 95.678; // 100 - 4.322
+      useRight = true;
       break;
     case "draw":
-      locationStyle.top = "89%";
-      locationStyle.left = "2.322%";
+      y = 89;
+      x = 2.322;
+      useLeft = true;
       break;
     case "discard":
-      locationStyle.top = "89%";
-      locationStyle.left = "94.322%";
+      y = 89;
+      x = 94.322;
+      useLeft = true;
       break;
     case "exhaust":
-      locationStyle.top = "78.5%";
-      locationStyle.left = "94.56%";
+      y = 78.5;
+      x = 94.56;
+      useLeft = true;
       break;
   }
+
+  if (useRight) {
+    locationStyle.right = `${100 - transformX(x, props.transform)}%`;
+  } else if (useLeft) {
+    locationStyle.left = `${transformX(x, props.transform)}%`;
+  }
+  locationStyle.top = `${transformY(y, props.transform)}%`;
 
   return (
     <button
@@ -449,6 +466,7 @@ export function DeckView(props: {
   character: string;
   what: DeckType;
   enableCardView?: boolean;
+  transform: Transform;
 }) {
   const [deckViewMode, setDeckViewMode] = useState("hidden");
   const [cardViewMode, setCardViewMode] = useState("hidden");
@@ -539,6 +557,7 @@ export function DeckView(props: {
         setDeckViewMode={setDeckViewMode}
         setCardViewMode={setCardViewMode}
         resetCardView={resetCardView}
+        transform={props.transform}
       />
       <CardGrid
         cards={props.cards}

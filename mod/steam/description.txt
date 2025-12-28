@@ -1,5 +1,16 @@
 Installation instructions can be found [b][url=https://github.com/Spireblight/STR-Spire-Mod]here[/url][/b].
 
+[h1]New Feature: Transform Support[/h1]
+This version includes coordinate transformation for non-fullscreen layouts!
+
+Configure in Mods → Slay the Relics Exporter → Config:
+• X Offset - Horizontal game window position on stream
+• Y Offset - Vertical game window position on stream
+• Width Scale - Game window width percentage
+• Height Scale - Game window height percentage
+
+Perfect for streamers who don't use fullscreen game capture!
+
 This is a mod necessary to run when using Twitch extension [b][url=https://dashboard.twitch.tv/extensions/ebkycs9lir8pbic2r0b7wa6bg6n7ua-0.0.1]Slay the Relics Reborn[/url][/b].
 It doesn't change anything about your game, all it does is take some of your game data and sends it over to Twitch.
 
