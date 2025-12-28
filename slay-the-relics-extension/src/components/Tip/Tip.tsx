@@ -3,6 +3,7 @@ import { CSSProperties, ReactNode, useContext } from "react";
 import { PlacesType } from "react-tooltip";
 import { Keywords, LocalizationContext } from "../Localization/Localization";
 import ReactDOMServer from "react-dom/server";
+import { Transform, transformHitBox as transformHitBoxUtil, DEFAULT_TRANSFORM } from "../../utils/transform";
 
 export type HitBox = {
   x: string;
@@ -169,6 +170,7 @@ export function Hitbox(props: {
   children: ReactNode;
   offset?: number;
   place?: PlacesType;
+  transform?: Transform;
 }) {
   let classes = "hitbox";
   if (props.magGlass) {
@@ -177,12 +179,33 @@ export function Hitbox(props: {
   if (import.meta.env.DEV) {
     classes += " outline";
   }
+
+  const transform = props.transform || DEFAULT_TRANSFORM;
+
+  // Parse hitbox values if they're strings (percentages)
+  const parseValue = (val: string | number): number => {
+    if (typeof val === 'string') {
+      return parseFloat(val);
+    }
+    return val;
+  };
+
+  const hitboxNum = {
+    x: parseValue(props.hitbox.x),
+    y: parseValue(props.hitbox.y),
+    w: parseValue(props.hitbox.w),
+    h: parseValue(props.hitbox.h),
+    z: props.hitbox.z,
+  };
+
+  const transformedHitbox = transformHitBoxUtil(hitboxNum, transform);
+
   const style: CSSProperties = {
-    left: props.hitbox.x,
-    top: props.hitbox.y,
-    width: props.hitbox.w,
-    height: props.hitbox.h,
-    zIndex: props.hitbox.z,
+    left: transformedHitbox.x,
+    top: transformedHitbox.y,
+    width: transformedHitbox.w,
+    height: transformedHitbox.h,
+    zIndex: transformedHitbox.z,
   };
 
   return (
@@ -255,6 +278,7 @@ export function PowerTipBlock(props: {
   offset?: number;
   place?: PlacesType;
   noExpand?: boolean;
+  transform?: Transform;
 }) {
   const keywords = useContext(LocalizationContext).keywords;
   let allTips = [];
@@ -288,6 +312,7 @@ export function PowerTipBlock(props: {
       hitbox={props.hitbox}
       offset={props.offset}
       place={props.place}
+      transform={props.transform}
     >
       {tooltipBlock}
     </Hitbox>
@@ -301,6 +326,7 @@ export function PowerTipStrip(props: {
   character: string;
   offset?: number;
   place?: PlacesType;
+  transform?: Transform;
 }) {
   const keywords = useContext(LocalizationContext).keywords;
   const allTips = expandTips(props.tips, keywords);

@@ -39,6 +39,7 @@ public class GameState {
     public List<List<Integer>> mapPath;
     public List<Integer> bottles;
     public float potionX;
+    public Transform transform;
 
 
     public GameState(String channel) {
@@ -64,6 +65,7 @@ public class GameState {
         this.exhaustPile = new ArrayList<>();
         this.bottles = Arrays.asList(-1, -1, -1);
         this.potionX = 33;
+        this.transform = new Transform();
     }
 
 
@@ -291,6 +293,10 @@ public class GameState {
         this.potionX = getPotionX();
 
         this.gameStateIndex++;
+    }
+
+    public void setTransform(Transform transform) {
+        this.transform = transform;
     }
 
     private float getPotionX() {

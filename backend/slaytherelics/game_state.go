@@ -54,6 +54,13 @@ type MapNode struct {
 	Parents []int  `json:"parents"`
 }
 
+type Transform struct {
+	OffsetX float64 `json:"offsetX"`
+	OffsetY float64 `json:"offsetY"`
+	ScaleX  float64 `json:"scaleX"`
+	ScaleY  float64 `json:"scaleY"`
+}
+
 type GameState struct {
 	Index   int    `json:"gameStateIndex"`
 	Channel string `json:"channel"`
@@ -71,13 +78,14 @@ type GameState struct {
 	MapPath        [][]int       `json:"mapPath"`
 	Bottles        []int         `json:"bottles"`
 	PotionX        float64       `json:"potionX"`
+	Transform      Transform     `json:"transform"`
 
 	DrawPile    []CardData `json:"drawPile"`
 	DiscardPile []CardData `json:"discardPile"`
 	ExhaustPile []CardData `json:"exhaustPile"`
 }
 
-type GameStateUpdate struct {
+type GameStateUpdate struct{
 	Index   int    `json:"gameStateIndex"`
 	Channel string `json:"channel"`
 
@@ -94,6 +102,7 @@ type GameStateUpdate struct {
 	MapPath        *[][]int       `json:"mapPath"`
 	Bottles        *[]int         `json:"bottles"`
 	PotionX        *float64       `json:"potionX"`
+	Transform      *Transform     `json:"transform"`
 
 	DrawPile    *[]CardData `json:"drawPile"`
 	DiscardPile *[]CardData `json:"discardPile"`

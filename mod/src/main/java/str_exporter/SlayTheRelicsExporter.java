@@ -27,6 +27,10 @@ public class SlayTheRelicsExporter implements StartGameSubscriber, PostInitializ
     private final EBSClient ebsClient;
     private final AuthManager authManager;
     private int tmpDelay = 0;
+    private int tmpOffsetX = 0;
+    private int tmpOffsetY = 0;
+    private int tmpScaleX = 100;
+    private int tmpScaleY = 100;
     private GameState gameState;
     private final GameStateManager gameStateManager;
     private Integrations integrations;
@@ -38,6 +42,10 @@ public class SlayTheRelicsExporter implements StartGameSubscriber, PostInitializ
         try {
             config = new Config();
             tmpDelay = config.getDelay();
+            tmpOffsetX = (int) config.getTransformOffsetX();
+            tmpOffsetY = (int) config.getTransformOffsetY();
+            tmpScaleX = (int) config.getTransformScaleX();
+            tmpScaleY = (int) config.getTransformScaleY();
             ebsClient = new EBSClient(config);
             authManager = new AuthManager(ebsClient, config);
             gameStateManager = new GameStateManager(ebsClient, config);
@@ -84,28 +92,60 @@ public class SlayTheRelicsExporter implements StartGameSubscriber, PostInitializ
             tmpDelay = (int) (me.value * me.multiplier);
         });
 
-        ModLabeledButton btn = new ModLabeledButton("Save", 400f, 480f, settingsPanel, (me) -> {
+        ModLabel transformLabel = new ModLabel("Transform (for non-fullscreen layouts):",
+                400.0f, 550.0f, settingsPanel, (me) -> {});
+
+        ModSlider offsetXSlider = new ModSlider("X Offset", 400f, 500, 100f, "%", settingsPanel, (me) -> {
+            tmpOffsetX = (int) (me.value * me.multiplier);
+        });
+
+        ModSlider offsetYSlider = new ModSlider("Y Offset", 400f, 450, 100f, "%", settingsPanel, (me) -> {
+            tmpOffsetY = (int) (me.value * me.multiplier);
+        });
+
+        ModSlider scaleXSlider = new ModSlider("Width Scale", 700f, 500, 200f, "%", settingsPanel, (me) -> {
+            tmpScaleX = (int) (me.value * me.multiplier);
+        });
+
+        ModSlider scaleYSlider = new ModSlider("Height Scale", 700f, 450, 200f, "%", settingsPanel, (me) -> {
+            tmpScaleY = (int) (me.value * me.multiplier);
+        });
+
+        ModLabeledButton btn = new ModLabeledButton("Save", 400f, 380f, settingsPanel, (me) -> {
             try {
                 config.setDelay(tmpDelay);
+                config.setTransformOffsetX(tmpOffsetX);
+                config.setTransformOffsetY(tmpOffsetY);
+                config.setTransformScaleX(tmpScaleX);
+                config.setTransformScaleY(tmpScaleY);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        ModLabeledButton oauthBtn = new ModLabeledButton("Connect with Twitch", 575f, 480f, settingsPanel, (me) -> {
+        ModLabeledButton oauthBtn = new ModLabeledButton("Connect with Twitch", 575f, 380f, settingsPanel, (me) -> {
             authManager.updateAuth(this::makeNewGameState);
         });
 
-        ModStatusImage statusImage = new ModStatusImage(950f, 480f, authManager.healthy, authManager.inProgress);
+        ModStatusImage statusImage = new ModStatusImage(950f, 380f, authManager.healthy, authManager.inProgress);
 
         settingsPanel.addUIElement(label1);
         settingsPanel.addUIElement(slider);
         settingsPanel.addUIElement(label2);
+        settingsPanel.addUIElement(transformLabel);
+        settingsPanel.addUIElement(offsetXSlider);
+        settingsPanel.addUIElement(offsetYSlider);
+        settingsPanel.addUIElement(scaleXSlider);
+        settingsPanel.addUIElement(scaleYSlider);
         settingsPanel.addUIElement(btn);
         settingsPanel.addUIElement(oauthBtn);
         settingsPanel.addUIElement(statusImage);
 
         slider.setValue(config.getDelay() * 1.0f / slider.multiplier);
+        offsetXSlider.setValue(config.getTransformOffsetX() * 1.0f / offsetXSlider.multiplier);
+        offsetYSlider.setValue(config.getTransformOffsetY() * 1.0f / offsetYSlider.multiplier);
+        scaleXSlider.setValue(config.getTransformScaleX() * 1.0f / scaleXSlider.multiplier);
+        scaleYSlider.setValue(config.getTransformScaleY() * 1.0f / scaleYSlider.multiplier);
 
         BaseMod.registerModBadge(ImageMaster.loadImage("SlayTheRelicsExporterResources/img/str_32x32.png"),
                 "Slay the Relics Exporter",

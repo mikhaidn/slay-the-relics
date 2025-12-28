@@ -13,6 +13,7 @@ import {
   LocalizationData,
 } from "../Localization/Localization";
 import { Tooltip } from "react-tooltip";
+import { Transform, DEFAULT_TRANSFORM } from "../../utils/transform";
 
 interface MapNode {
   type: string;
@@ -64,6 +65,7 @@ interface RunState extends Record<string, unknown> {
   mapPath: number[][];
   bottles: number[];
   potionX: number;
+  transform: Transform;
 }
 
 interface AppState {
@@ -113,6 +115,7 @@ export default class App extends Component<AppProps, AppState> {
         baseRelicStats: {},
         bottles: [-1, -1, -1],
         potionX: 33,
+        transform: DEFAULT_TRANSFORM,
       },
     };
   }
@@ -267,12 +270,14 @@ export default class App extends Component<AppProps, AppState> {
             character={this.state.runState.character}
             relicParams={this.state.runState.baseRelicStats}
             relicTips={this.state.runState.relicTips}
+            transform={this.state.runState.transform}
           />
           <PotionBar
             potions={this.state.runState.potions}
             relics={this.state.runState.relics}
             character={this.state.runState.character}
             potionX={this.state.runState.potionX}
+            transform={this.state.runState.transform}
           />
           <DeckView
             bottles={this.state.runState.bottles}
@@ -280,21 +285,25 @@ export default class App extends Component<AppProps, AppState> {
             character={this.state.runState.character}
             what={"deck"}
             enableCardView={true}
+            transform={this.state.runState.transform}
           />
           <DeckView
             cards={this.state.runState.drawPile}
             character={this.state.runState.character}
             what={"draw"}
+            transform={this.state.runState.transform}
           />
           <DeckView
             cards={this.state.runState.discardPile}
             character={this.state.runState.character}
             what={"discard"}
+            transform={this.state.runState.transform}
           />
           <DeckView
             cards={this.state.runState.exhaustPile}
             character={this.state.runState.character}
             what={"exhaust"}
+            transform={this.state.runState.transform}
           />
           <div>
             {this.state.runState.additionalTips
@@ -313,6 +322,7 @@ export default class App extends Component<AppProps, AppState> {
                     0,
                   ).convertToHb()}
                   tips={t.tips}
+                  transform={this.state.runState.transform}
                 />
               ))}
           </div>

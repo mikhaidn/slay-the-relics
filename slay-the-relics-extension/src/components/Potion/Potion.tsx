@@ -1,6 +1,7 @@
 import { PowerTipStrip, Tip } from "../Tip/Tip";
 import { LocalizationContext, Potions } from "../Localization/Localization";
 import { useContext } from "react";
+import { Transform, transformX, transformY } from "../../utils/transform";
 
 const POTION_HITBOX_WIDTH = 2.916; // %
 
@@ -27,6 +28,7 @@ export default function PotionBar(props: {
   potions: string[];
   relics: string[];
   potionX: number;
+  transform: Transform;
 }) {
   const hasBark =
     props.relics.includes("Sacred Bark") || props.relics.includes("SacredBark");
@@ -34,6 +36,8 @@ export default function PotionBar(props: {
   return (
     <div>
       {props.potions.map((potion, i) => {
+        const x = props.potionX - POTION_HITBOX_WIDTH / 2 + i * POTION_HITBOX_WIDTH;
+        const y = 0;
         return (
           <PowerTipStrip
             place={"bottom-start"}
@@ -41,11 +45,11 @@ export default function PotionBar(props: {
             key={"potion-" + i}
             magGlass={false}
             hitbox={{
-              x: `${props.potionX - POTION_HITBOX_WIDTH / 2 + i * POTION_HITBOX_WIDTH}%`,
-              y: "0%",
+              x: `${transformX(x, props.transform)}%`,
+              y: `${transformY(y, props.transform)}%`,
               z: 1,
-              w: "2.916%",
-              h: "5.556%",
+              w: `${(2.916 * props.transform.scaleX) / 100}%`,
+              h: `${(5.556 * props.transform.scaleY) / 100}%`,
             }}
             tips={getPotionTips(potion, hasBark, potionsLoc)}
           />
